@@ -23,6 +23,7 @@ module.exports = configure(function (/* ctx */) {
         boot: [
             'i18n',
             'axios',
+            'String',
         ],
 
         // https://v1.quasar.dev/quasar-cli/quasar-conf-js#Property%3A-css
@@ -85,12 +86,12 @@ module.exports = configure(function (/* ctx */) {
         devServer: {
             https: false,
             port: 8090,
-            open: true // opens browser window automatically
+            open: false // opens browser window automatically
         },
 
         // https://v1.quasar.dev/quasar-cli/quasar-conf-js#Property%3A-framework
         framework: {
-            iconSet: 'material-icons', // Quasar icon set
+            iconSet: 'fontawesome-v5', // Quasar icon set
             lang: 'en-us', // Quasar language pack
             config: {},
 

@@ -14,6 +14,7 @@
     "babel-core": "^6.26.3",
     "babel-runtime": "^6.26.0",
     "core-js": "^3.6.5",
+    "parsey": "^0.2.0",
     "quasar": "^1.0.0",
     "vue-class-component": "^7.2.2",
     "vue-i18n": "^8.0.0",
@@ -22,8 +23,7 @@
     "vue-property-decorator": "^8.3.0"
   },
   "devDependencies": {
-    "@quasar/app": "^2.0.0",
-    "@types/node": "^10.17.15"
+    "@quasar/app": "^2.0.0"
   },
   "browserslist": [
     "ie >= 11",
