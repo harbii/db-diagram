@@ -1,8 +1,10 @@
-import { RouteConfig } from 'vue-router';
+import { RouteConfig } from 'vue-router'
+import MainLayout      from '../UI/Layouts/MainLayout.ts'
+import Index           from '../UI/Pages/Index.ts'
 
-const routes: RouteConfig[] = [
+const routes: RouteConfig[ ] = [
     {
-        path : '/' , component : ( ) => import( 'Layouts/MainLayout.vue' ) , children : [ { path: '', component: () => import( 'Pages/Index.vue' ) } ]
+        path : '/' , component : MainLayout , children : [ { path: '', component: Index } ]
     },
     { path : '*', component : ( ) => import( 'Pages/Error404.vue' ) }
 ];
