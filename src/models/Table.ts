@@ -26,4 +26,8 @@ export default class table{
         return this.details.color ;
     }
 
+    get icon( ) : string {
+        return this.details.icon ;
+    }
+
 }

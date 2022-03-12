@@ -4,4 +4,5 @@ export default class Args {
     Null      : string = 'false' ;
     increment : string = 'false' ;
     color     : string = 'red'   ;
+    icon      : string = ''      ;
 }

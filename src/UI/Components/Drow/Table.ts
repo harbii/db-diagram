@@ -1,5 +1,5 @@
 import { Vue    , Component , Prop      } from 'vue-property-decorator'
-import { QCard  , QList , QCardSection  } from 'quasar'
+import { QCard  , QList , QCardSection , QIcon , QItem , QItemSection } from 'quasar'
 import { Table  , Column as ColumnModel } from 'src/models'
 import { Column                         } from '.'
 
@@ -15,7 +15,12 @@ import { Column                         } from '.'
 
     render( CreateElement : Vue.CreateElement ) : Vue.VNode {
         return CreateElement( QCard , { class : 'col-4' } , [
-            CreateElement( QCardSection , { class : 'bg-' + this.value.color} , this.value.tableName ) ,
+            CreateElement( QCardSection , { class : 'bg-' + this.value.color , style : { padding : 0 } , props : { avatar : true } } , [ CreateElement( QItem , { } , [
+                CreateElement( QItemSection , this.value.tableName ) ,
+                CreateElement( QItemSection , { props : { avatar : true } } , [
+                    CreateElement( QIcon , { props : { name : this.value.icon } } )
+                ] ) ,
+            ] ) ] ) ,
             this.renderQList( CreateElement ) ,
         ] )
     }

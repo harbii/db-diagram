@@ -21,6 +21,10 @@ export default class Column{
         return this.args.type ;
     }
 
+    get icon( ) : string {
+        return this.args.icon ;
+    }
+
     get Null( ) : string {
         return this.args.Null === 'true' ? 'nullable' : 'not nullable' ;
     }
