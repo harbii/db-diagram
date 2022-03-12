@@ -33,4 +33,8 @@ export default class Column{
         return this.args.increment === 'true' ? 'increment' : 'not increment' ;
     }
 
+    get color( ) : string {
+        return this.args.color ;
+    }
+
 }

@@ -3,6 +3,6 @@ export default class Args {
     type      : string = 'mixed' ;
     Null      : string = 'false' ;
     increment : string = 'false' ;
-    color     : string = 'red'   ;
+    color     : string = ''      ;
     icon      : string = ''      ;
 }

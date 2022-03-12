@@ -5,7 +5,7 @@ import { Column                         } from 'src/models'
 @Component export default class extends Vue {
     @Prop({ type : Column , required : true }) value !: Column ;
     render( CreateElement : Vue.CreateElement ) : Vue.VNode {
-        return CreateElement( QItem , { } , [
+        return CreateElement( QItem , { class : 'bg-' + this.value.color } , [
             CreateElement( QItemSection , this.value.name ) ,
             CreateElement( QItemSection , { props : { avatar : true } } , [
                 this.value.icon ? CreateElement( QIcon , { props : { name : this.value.icon } } ) : null
