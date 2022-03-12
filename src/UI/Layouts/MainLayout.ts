@@ -41,6 +41,7 @@ export default class MainLayout extends Vue {
         this.code = await this.readFileAsync( file );
     }
     render               ( CreateElement : Vue.CreateElement ) : Vue.VNode {
+        this.$q.dark.set(true) ;
         let file : Vue.VNode<QFile> ;
         return CreateElement( QLayout , { class : 'hHh lpR fFf' } , [ 
             CreateElement( QHeader , { props : { elevated : true } } , [ CreateElement( QToolbar , { props : { elevated : true } } , [

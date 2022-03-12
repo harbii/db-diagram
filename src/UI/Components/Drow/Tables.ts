@@ -1,28 +1,22 @@
-import { Vue, Component, Prop } from 'vue-property-decorator'
+import { Vue   , Component , Prop         } from 'vue-property-decorator'
+import { QCard , QList     , QCardSection } from 'quasar'
+import Column from './Column'
+import Table  from 'src/models/Table'
 
-class table{
-    data : string ;
-    constructor( data : string ) {
-        this.data = data ;
-    }
-    toString( ){
-        console.log( 'this.data' , this.data ) ;
-        console.log( 'this.tableName' , this.tableName || '' ) ;
-        return this.data
-    }
-    get tableName( ) : string{
-        return this.data.getStringBetween( 'table ' , ' {') ;
-    }
-    get contant( ) : string{
-        return this.data.getStringBetween( 'table ' , ' {') ;
-    }
-}
+@Component export default class extends Vue {
 
-@Component
-export default class DataBaseTableUi extends Vue {
     @Prop({ type : String , required : true } ) value ! : string;
-    name : string = 'DataBaseTableUi' ;
+
+    table : Table  = new Table( this.value ) ;
+
     render( CreateElement : Vue.CreateElement ) : Vue.VNode {
-        return CreateElement( 'div' , ( new table( this.value ) ).toString( ) )
+        return CreateElement( QCard , { class : 'col' } , [
+            CreateElement( QCardSection , { class : 'bg-deep-purple-9' } , 'tableName => ' + this.table.tableName ) ,
+            CreateElement( QList , { props : {
+                bordered  : true ,
+                separator : true ,
+            } } , this.table.contant.map( ( string : String ) => CreateElement( Column , { props : { value : string } } ) ) ) ,
+        ] )
     }
-};
+
+}

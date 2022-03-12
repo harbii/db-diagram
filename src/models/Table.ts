@@ -1,6 +1,19 @@
-export default class preser{
+import Preser from "../services/parser" ;
 
-    constructor( data : string ){
-        this.data = data.replace( this.commentsRegex , '' ) ;
+export default class table{
+
+    data : string ;
+
+    constructor( data : string ) {
+        this.data = data ;
     }
+
+    get tableName( ) : String {
+        return Preser.GetTableNameFromString( this.data ) ;
+    }
+
+    get contant( ) : String[ ] {
+        return Preser.convertStringToContant( this.data ) ;
+    }
+
 }

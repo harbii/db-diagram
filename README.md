@@ -18,5 +18,7 @@ quasar dev
 quasar build
 ```
 
-### Customize the configuration
-See [Configuring quasar.conf.js](https://v1.quasar.dev/quasar-cli/quasar-conf-js).
+### to do list
+- [ ] fix container of tables
+- [ ] fix Component of Column
+- [ ] fix perser table name and 

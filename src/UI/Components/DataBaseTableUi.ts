@@ -1,16 +1,15 @@
-import { Vue, Component, Prop } from 'vue-property-decorator'
-import Table from './Drow/Tables'
-import preser from '../../services/parser';
+import { Vue   , Component, Prop } from 'vue-property-decorator'
+import   Table                     from './Drow/Tables'
+import   preser                    from '../../services/parser'
 
-@Component({ Table })
+@Component export default class extends Vue {
 
-export default class DataBaseTableUi extends Vue {
     @Prop({ type : String , required : true } ) value ! : string;
-    name : string = 'DataBaseTableUi' ;
-    get code( ) : string[ ] {
-        return preser.fix( this.value ).resulte( ) ;
-    }
+
+    code : string[ ] = preser.fix( this.value ).resulte( ) ;
+
     render( CreateElement : Vue.CreateElement ) : Vue.VNode {
-        return CreateElement( 'div' , this.code.map( ( string : String ) => CreateElement( Table , { props : { value : string } } ) ) );
+        return CreateElement( 'div' , { class : 'fit row' } , this.code.map( ( string : String ) => CreateElement( Table , { props : { value : string } } ) ) );
     }
+
 };

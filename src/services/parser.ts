@@ -9,36 +9,33 @@
  * \) : match closing parentheses
 */
 
-export default class preser{
+export default class Preser{
     data          : string ;
     commentsRegex : RegExp = /\/\*[\s\S]*?\*\/|\/\/.*/g ;
     spacesRegex   : RegExp = /\s\s+/g ;
-    expr = `Table translates ( ) {
-        value Varchar [ not null ]
+    expr                   = `Table translates ( ) {
+        value [ Null : false , type : Varchar ]
     }
     Table sc as sss {
-        value Varchar [ not null ]
+        value [ Null : false , type : Varchar ]
     }
-    Table translates {
-        value Varchar [ not null ]
-        languge_id bigint [ ref: > L.id, not null ]
-        creator_id Integer [ not null ]
-        creator_type Varchar [ not null ]
-        about_id Integer [ not null ]
-        about_type Varchar [ not null ]
-        id SERIAL [ increment ]
-        is_available Boolean [ default: true ]
-        is_active Boolean [ default: true ]
-        created_at DateTime [ default: 'now( )' ]
-        updated_at DateTime [ default: 'now( )' ]
-        delete_at DateTime [ null ]
+    Table mahmoud {
+        value        [ Null : false    , type      : Varchar              ]
+        languge_id   [ type : bigint   , ref       : > L.id, Null : false ]
+        creator_id   [ type : Integer  , Null      : false                ]
+        creator_type [ type : Varchar  , Null      : false                ]
+        about_type   [ type : Varchar  , Null      : true                 ]
+        about_id     [ type : Integer  , Null      : false                ]
+        id           [ type : SERIAL   , increment : true                 ]
+        is_available [ type : Boolean  , default   : true                 ]
+        is_active    [ type : Boolean  , default   : true                 ]
+        created_at   [ type : DateTime , default   : 'now( )'             ]
+        updated_at   [ type : DateTime , default   : 'now( )'             ]
+        delete_at    []
     }
     Table ca ( ) {
-        value Varchar [ not null ]
+        value [ Null : false , type : Varchar ]
     }`;
-    static fix( data : string ) : preser {
-        return new preser( data ) ;
-    }
     constructor( data : string ) {
         this.data = this.expr ;
     }
@@ -47,11 +44,53 @@ export default class preser{
             .replace ( this.commentsRegex , ''        )
             .replace ( this.spacesRegex   , ' '       )
             .replace ( /table|Table/gi    , '\ntable' )
-            .split   (                      '\n'      )
-            .filter  ( n => n )
+            .split   ( '\n'                           )
+            .filter  ( n => n                         )
         ;
     }
     resulte( ) : string[ ] {
         return this.stringReBuild ( this.data ) ;
     }
+
+    static fix( data : string ) : Preser {
+        return new Preser( data ) ;
+    }
+
+    static GetTableNameFromString( Contant : string ) : string {
+        return Contant.getStringBetween( 'table ' , ' {' )[ 1 ];
+    }
+
+    static GetColumnNameFromString( Contant : string ) : string {
+        return Contant.replace( / .*/ , '' ) ;
+    }
+
+    static convertStringToContant( Contant : string ) : string[ ] {
+        return Contant.getStringBetween( '{ ' , ' }' )[ 1 ]
+            .split  ( "]"    )
+            .filter ( n => n )
+            .map    ( n => n.trim( ) + ' ]' )
+        ;
+    }
+
+    static GetColumndetails( Contant : string ) : args {
+        let object : args = new args( ) ;
+        ( Contant.match( /\[\s*[^\[\]]*?\s*\]/g ) ?? [ '' ] )[ 0 ]
+            .slice ( 1 , -1 )
+            .split ( ","    )
+            .map( arg => {
+                let argd = arg.split( ":" ) ;
+                if ( argd.length === 1 ) argd = [ '' , '' ] ;
+                object[ argd[ 0 ].trim( ) ] = argd[ 1 ].trim( ) ;
+            } )
+        ;
+        return object ;
+    }
+
+}
+
+class args {
+    [ key : string ] : any   ;
+    type      : string  = 'mixed' ;
+    Null      : string = 'false'   ;
+    increment : string = 'false'   ;
 }
