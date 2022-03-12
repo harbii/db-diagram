@@ -1,4 +1,5 @@
 import Preser from "../services/parser" ;
+import { Args , Column } from "."
 
 export default class table{
 
@@ -6,14 +7,23 @@ export default class table{
 
     constructor( data : string ) {
         this.data = data ;
+        console.log( 'this.details' , this.details );
     }
 
-    get tableName( ) : String {
-        return Preser.GetTableNameFromString( this.data ) ;
+    get tableName( ) : string {
+        return Preser.GetColumnNameFromString( this.data ) ;
     }
 
-    get contant( ) : String[ ] {
-        return Preser.convertStringToContant( this.data ) ;
+    get details( ) : Args {
+        return Preser.GetTableDetailsFromString( this.data ) ;
+    }
+
+    get contant( ) : Column[ ] {
+        return Preser.convertStringTocolumn( this.data ) ;
+    }
+
+    get color( ) : string {
+        return this.details.color ;
     }
 
 }

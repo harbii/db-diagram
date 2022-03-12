@@ -1,6 +1,7 @@
-import Preser from "../services/parser" ;
+import { Args } from "."
+import Preser from "../services/parser" 
 
-export default class column{
+export default class Column{
 
     data : string ;
 
@@ -8,8 +9,8 @@ export default class column{
         this.data = data ;
     }
 
-    get args( ) {
-        return Preser.GetColumndetails ( this.data );
+    get args( ) : Args {
+        return Preser.GetColumndetails        ( this.data );
     }
 
     get name( ) : string {

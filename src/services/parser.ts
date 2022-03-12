@@ -1,25 +1,22 @@
-/** 
- * https://stackoverflow.com/questions/17779744/regular-expression-to-get-a-string-between-parentheses-in-javascript
- * /\(([^)]+)\)/
- * Breakdown:
- * \( : match an opening parentheses
- * ( : begin capturing group
- * [^)]+: match one or more non ) characters
- * ) : end capturing group
- * \) : match closing parentheses
-*/
+import { Table , Column , Args }  from 'app/src/models'
 
 export default class Preser{
     data          : string ;
     commentsRegex : RegExp = /\/\*[\s\S]*?\*\/|\/\/.*/g ;
-    spacesRegex   : RegExp = /\s\s+/g ;
-    expr                   = `Table translates ( ) {
+    spacesRegex   : RegExp = /\s\s|\n+/g ;
+    static expr   : string = `translates ( ) {
         value [ Null : false , type : Varchar ]
     }
-    Table sc as sss {
+    sc as sss {
         value [ Null : false , type : Varchar ]
     }
-    Table mahmoud {
+    sc as sss {
+        id           [ type : SERIAL    ]
+        value        [ type : mixed    , default : '' ]
+        is_available [ type : Boolean  , default : true ]
+        created_at   [ type : DateTime , default : now( ) ]
+    }
+    mahmoud {
         value        [ Null : false    , type      : Varchar              ]
         languge_id   [ type : bigint   , ref       : > L.id, Null : false ]
         creator_id   [ type : Integer  , Null      : false                ]
@@ -29,27 +26,39 @@ export default class Preser{
         id           [ type : SERIAL   , increment : true                 ]
         is_available [ type : Boolean  , default   : true                 ]
         is_active    [ type : Boolean  , default   : true                 ]
-        created_at   [ type : DateTime , default   : 'now( )'             ]
-        updated_at   [ type : DateTime , default   : 'now( )'             ]
+        created_at   [ type : DateTime , default   : now( )               ]
+        updated_at   [ type : DateTime , default   : now( )               ]
         delete_at    []
     }
-    Table ca ( ) {
+    ca ( color : green ) {
         value [ Null : false , type : Varchar ]
+        delete_at
     }`;
+
     constructor( data : string ) {
-        this.data = this.expr ;
+        this.data = data ;
     }
-    stringReBuild( string : string ) : string[ ] {
-        return string
-            .replace ( this.commentsRegex , ''        )
-            .replace ( this.spacesRegex   , ' '       )
-            .replace ( /table|Table/gi    , '\ntable' )
-            .split   ( '\n'                           )
-            .filter  ( n => n                         )
+
+    getStringBetween ( start : String , end : String ) : RegExpMatchArray | String {
+        return String( this.data ).match( new RegExp( start + "(.*)" + end ) ) ?? '' ;
+    }
+
+    stringReBuild( ) : string[ ] {
+        return this.data
+            .replace ( this.commentsRegex , ''    )
+            .replace ( this.spacesRegex   , ' '   )
+            .replace ( /}/gi              , '}\n' )
+            .split   ( '\n'                       )
+            .filter  ( n => n                     )
+            .map     ( n => n.trim( )             )
         ;
     }
-    resulte( ) : string[ ] {
-        return this.stringReBuild ( this.data ) ;
+
+    Tables( ) : Table[ ] {
+        return this
+            .stringReBuild ( )
+            .map( ( table : string ) => new Table( table ) )
+        ;
     }
 
     static fix( data : string ) : Preser {
@@ -57,23 +66,28 @@ export default class Preser{
     }
 
     static GetTableNameFromString( Contant : string ) : string {
-        return Contant.getStringBetween( 'table ' , ' {' )[ 1 ];
+        return ( new Preser( Contant ) ).getStringBetween( 'table ' , ' {' )[ 1 ];
     }
 
     static GetColumnNameFromString( Contant : string ) : string {
         return Contant.replace( / .*/ , '' ) ;
     }
 
-    static convertStringToContant( Contant : string ) : string[ ] {
-        return Contant.getStringBetween( '{ ' , ' }' )[ 1 ]
+    static convertStringTocolumn( Contant : string ) : Column[ ] {
+        return ( new Preser( Contant ) ).convertStringToContant( Contant ) ;
+    }
+
+    convertStringToContant( Contant : string ) : Column[ ] {
+        return ( new Preser( Contant ) ).getStringBetween( '{ ' , ' }' )[ 1 ]
             .split  ( "]"    )
             .filter ( n => n )
             .map    ( n => n.trim( ) + ' ]' )
+            .map( ( column : string ) => new Column ( column ) )
         ;
     }
 
-    static GetColumndetails( Contant : string ) : args {
-        let object : args = new args( ) ;
+    static GetColumndetails( Contant : string ) : Args {
+        let object : Args = new Args( ) ;
         ( Contant.match( /\[\s*[^\[\]]*?\s*\]/g ) ?? [ '' ] )[ 0 ]
             .slice ( 1 , -1 )
             .split ( ","    )
@@ -86,11 +100,18 @@ export default class Preser{
         return object ;
     }
 
-}
+    static GetTableDetailsFromString( Contant : string ) : Args {
+        let object : Args = new Args( ) ;
+        ( Contant.match( /\(\s*[^\[\]]*?\s*\)/g ) ?? [ '' ] )[ 0 ]
+            .slice ( 1 , -1 )
+            .split ( ","    )
+            .map( arg => {
+                let argd = arg.split( ":" ) ;
+                if ( argd.length === 1 ) argd = [ '' , '' ] ;
+                object[ argd[ 0 ].trim( ) ] = argd[ 1 ].trim( ) ;
+            } )
+        ;
+        return object ;
+    }
 
-class args {
-    [ key : string ] : any   ;
-    type      : string  = 'mixed' ;
-    Null      : string = 'false'   ;
-    increment : string = 'false'   ;
 }

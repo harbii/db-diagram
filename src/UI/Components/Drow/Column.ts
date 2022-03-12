@@ -1,21 +1,15 @@
-import { Vue, Component, Prop } from 'vue-property-decorator'
-import Column from 'src/models/column'
-import {
-    QItem , QItemSection , QBadge
-} from 'quasar'
+import { Vue    , Component    , Prop   } from 'vue-property-decorator'
+import { QItem  , QItemSection , QBadge } from 'quasar'
+import { Column                         } from 'src/models'
 
-@Component export default class column extends Vue {
-
-    @Prop({ type : String , required : true }) value ! : string;
-
-    column : Column  = new Column( this.value ) ;
-
+@Component export default class extends Vue {
+    @Prop({ type : Column , required : true }) value !: Column ;
     render( CreateElement : Vue.CreateElement ) : Vue.VNode {
         return CreateElement( QItem , { } , [
-            CreateElement( QItemSection , this.column.name ) ,
-            CreateElement( QItemSection , { props : { side : true } } , this.column.type      ) ,
-            CreateElement( QItemSection , { props : { side : true , top : true } } , [ CreateElement( QBadge , { props : { label : this.column.Null , color : 'teal' } } ) ] ) ,
-            CreateElement( QItemSection , { props : { side : true } } , this.column.increment ) ,
+            CreateElement( QItemSection , this.value.name ) ,
+            CreateElement( QItemSection , { props : { side : true } } , this.value.type      ) ,
+            CreateElement( QItemSection , { props : { side : true , top : true } } , [ CreateElement( QBadge , { props : { label : this.value.Null , color : 'teal' } } ) ] ) ,
+            // CreateElement( QItemSection , { props : { side : true } } , this.value.increment ) ,
         ] )
     }
 };
