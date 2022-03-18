@@ -1,17 +1,16 @@
-import { Vue    , Component    , Prop   } from 'vue-property-decorator'
-import { QItem  , QItemSection , QBadge , QIcon } from 'quasar'
-import { Column                         } from 'src/models'
+import { QItem  , QItemSection , QIcon } from 'quasar'
+import { Vue    , Component    , Prop  } from 'vue-property-decorator'
+import { Column                        } from 'src/models'
 
 @Component export default class extends Vue {
-    @Prop({ type : Column , required : true }) value !: Column ;
+    @Prop({ type : Column , required : true }) readonly value !: Column ;
     render( CreateElement : Vue.CreateElement ) : Vue.VNode {
-        return CreateElement( QItem , { class : 'bg-' + this.value.color } , [
-            CreateElement( QItemSection , this.value.name ) ,
+        return CreateElement( QItem , { class : `bg-${ this.value.Arguments.color }` , props : { bordered : true , separator : true } } , [
             CreateElement( QItemSection , { props : { avatar : true } } , [
-                this.value.icon ? CreateElement( QIcon , { props : { name : this.value.icon } } ) : null
+                this.value.Arguments.icon ? CreateElement( QIcon , { props : { name : this.value.Arguments.icon } } ) : null
             ] ) ,
-            CreateElement( QItemSection , { props : { side : true } } , this.value.type      ) ,
-            CreateElement( QItemSection , { props : { side : true , top : true } } , [ CreateElement( QBadge , { props : { label : this.value.Null , color : 'teal' } } ) ] ) ,
+            CreateElement( QItemSection , this.value.Name + '' ) ,
+            CreateElement( QItemSection , { props : { side : true } } , this.value.total + '' ) ,
             // CreateElement( QItemSection , { props : { side : true } } , this.value.increment ) ,
         ] )
     }

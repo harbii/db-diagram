@@ -1,117 +1,89 @@
-import { Table , Column , Args }  from 'app/src/models'
+export interface IArguments {
+    [ key : string ] : String
+}
 
-export default class Preser{
-    data          : string ;
-    commentsRegex : RegExp = /\/\*[\s\S]*?\*\/|\/\/.*/g ;
-    spacesRegex   : RegExp = /\s\s|\n+/g ;
-    static expr   : string = `translates ( ) {
-        value [ Null : false , type : Varchar ]
-    }
-    sc as sss {
-        value [ Null : false , type : Varchar ]
-    }
-    sc as sss {
-        id           [ type : SERIAL    ]
-        value        [ type : mixed    , default : '' ]
-        is_available [ type : Boolean  , default : true ]
-        created_at   [ type : DateTime , default : now( ) ]
-    }
-    mahmoud {
-        value        [ Null : false    , type      : Varchar              ]
-        languge_id   [ type : bigint   , ref       : > L.id, Null : false ]
-        creator_id   [ type : Integer  , Null      : false                ]
-        creator_type [ type : Varchar  , Null      : false                ]
-        about_type   [ type : Varchar  , Null      : true                 ]
-        about_id     [ type : Integer  , Null      : false                ]
-        id           [ type : SERIAL   , increment : true                 ]
-        is_available [ type : Boolean  , default   : true                 ]
-        is_active    [ type : Boolean  , default   : true                 ]
-        created_at   [ type : DateTime , default   : now( )               ]
-        updated_at   [ type : DateTime , default   : now( )               ]
-        delete_at    []
-    }
-    ca ( color : green ) {
-        value [ Null : false , type : Varchar ]
-        delete_at
-    }`;
+export interface IColumn {
+    Name      : String
+    Arguments : IArguments
+}
 
-    constructor( data : string ) {
+export interface ITable extends IColumn {
+    Columns   : IColumn[ ]
+}
+
+export class RegExpConstants{
+    static readonly commentsRegex : RegExp = /\/\*[\s\S]*?\*\/|\/\/.*/g ;
+    static readonly spacesRegex   : RegExp = /\s\s|\n+/g                ;
+    static readonly newLine       : RegExp = /\n/                       ;
+    static readonly blocks        : RegExp = /{(.*)}/                   ;
+    static readonly firstWord     : RegExp = /(?:^|(?:[.!?]\s))(\w+)/   ;
+    static readonly args          : RegExp = /\(\s*[^\[\]]*?\s*\)/g     ; /// ==== \\(\\s*[^\\[\\]]*?\\s*\\)/g
+    convert( args : RegExp ){
+        return /\/(.*)\/(.*)/.exec( args.toString( ) ) ;
+    }
+}
+
+export class Stringer{
+
+    data : String ;
+
+    constructor( data : String ) {
         this.data = data ;
     }
 
-    getStringBetween ( start : String , end : String ) : RegExpMatchArray | String {
-        return String( this.data ).match( new RegExp( start + "(.*)" + end ) ) ?? '' ;
+    static setData( data : String ) : Stringer {
+        return new Stringer( data ) ;
     }
 
-    stringReBuild( ) : string[ ] {
-        return this.data
-            .replace ( this.commentsRegex , ''    )
-            .replace ( this.spacesRegex   , ' '   )
-            .replace ( /}/gi              , '}\n' )
-            .split   ( '\n'                       )
-            .filter  ( n => n                     )
-            .map     ( n => n.trim( )             )
-        ;
+    getName( ) : String {
+        return this.match( RegExpConstants.firstWord ) ;
     }
 
-    Tables( ) : Table[ ] {
-        return this
-            .stringReBuild ( )
-            .map( ( table : string ) => new Table( table ) )
-        ;
+    match ( matcher: { [ Symbol.match ]( string: string ) : RegExpMatchArray | null ; } , number : number = 0 ) : String {
+        return ( this.data.match( matcher ) ?? [ '' ] )[ number ] ;
     }
 
-    static fix( data : string ) : Preser {
-        return new Preser( data ) ;
-    }
-
-    static GetTableNameFromString( Contant : string ) : string {
-        return ( new Preser( Contant ) ).getStringBetween( 'table ' , ' {' )[ 1 ];
-    }
-
-    static GetColumnNameFromString( Contant : string ) : string {
-        return Contant.replace( / .*/ , '' ) ;
-    }
-
-    static convertStringTocolumn( Contant : string ) : Column[ ] {
-        return ( new Preser( Contant ) ).convertStringToContant( Contant ) ;
-    }
-
-    convertStringToContant( Contant : string ) : Column[ ] {
-        return ( new Preser( Contant ) ).getStringBetween( '{ ' , ' }' )[ 1 ]
-            .split  ( "]"    )
-            .filter ( n => n )
-            .map    ( n => n.trim( ) + ' ]' )
-            .map( ( column : string ) => new Column ( column ) )
-        ;
-    }
-
-    static GetColumndetails( Contant : string ) : Args {
-        let object : Args = new Args( ) ;
-        ( Contant.match( /\[\s*[^\[\]]*?\s*\]/g ) ?? [ '' ] )[ 0 ]
+    GetArguments( start : String = '(' , end : String = ')' , by : string = ',' ) : IArguments {
+        let args : IArguments = { } ;
+        this.match ( new RegExp( `\\${start}\\s*[^\\[\\]]*?\\s*\\${end}` , 'g' ) )
             .slice ( 1 , -1 )
-            .split ( ","    )
-            .map( arg => {
-                let argd = arg.split( ":" ) ;
-                if ( argd.length === 1 ) argd = [ '' , '' ] ;
-                object[ argd[ 0 ].trim( ) ] = argd[ 1 ].trim( ) ;
-            } )
+            .split ( by     )
+            .map   ( arg => ( arg.split( ":" ).length === 1 ? [ '' , '' ] : arg.split( ":" ) ).map( key => key.trim( ) ) )
+            .map   ( arg => args[ arg[ 0 ] ] = arg[ 1 ] )
         ;
-        return object ;
+        return args ;
     }
 
-    static GetTableDetailsFromString( Contant : string ) : Args {
-        let object : Args = new Args( ) ;
-        ( Contant.match( /\(\s*[^\[\]]*?\s*\)/g ) ?? [ '' ] )[ 0 ]
-            .slice ( 1 , -1 )
-            .split ( ","    )
-            .map( arg => {
-                let argd = arg.split( ":" ) ;
-                if ( argd.length === 1 ) argd = [ '' , '' ] ;
-                object[ argd[ 0 ].trim( ) ] = argd[ 1 ].trim( ) ;
-            } )
+}
+
+export default class Preser{
+
+    static Tables( data : String ) : ITable[ ] { return data
+        .replace ( RegExpConstants.commentsRegex , ''    )
+        .replace ( RegExpConstants.spacesRegex   , ' '   )
+        .replace ( /}/gi                         , '}\n' )
+        .split   ( RegExpConstants.newLine               )
+        .filter  ( n => n                                )
+        .map     ( n => n.trim( )                        )
+        .map     ( ( data : String ) : ITable => ( {
+            Name      : Stringer .setData ( data ).getName      (           ) ,
+            Arguments : Stringer .setData ( data ).GetArguments ( '(' , ')' ) ,
+            Columns   : Preser   .Columns ( data )
+        } ) )
+    ; }
+
+    static Columns( data : String ) : IColumn[ ] { return Stringer
+        .setData( data                       )
+        .match  ( RegExpConstants.blocks , 1 )
+        .split  ( "]"                        )
+        .map    ( n => n.trim( )             )
+        .filter ( n => n                     )
+        .map    ( n => n + ' ]'              )
+        .map    ( ( data : String ) : IColumn => ({
+                Name      : Stringer.setData( data ).getName      (           ) ,
+                Arguments : Stringer.setData( data ).GetArguments ( '[' , ']' ) ,
+            }) )
         ;
-        return object ;
     }
 
 }

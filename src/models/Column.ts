@@ -1,40 +1,28 @@
-import { Args } from "."
-import Preser from "../services/parser" 
+import { Args    } from "."
+import { IColumn } from "./Interfaces"
 
 export default class Column{
-
-    data : string ;
-
-    constructor( data : string ) {
-        this.data = data ;
+    Name      : String ;
+    Arguments : Args   ;
+    constructor( data : IColumn ) {
+        this.Name      = data.Name ;
+        this.Arguments = new Args( data.Arguments ) ;
     }
 
-    get args( ) : Args {
-        return Preser.GetColumndetails        ( this.data );
+    get Null( ) : String {
+        return this.Arguments.Null === 'true' ? '?' : '!' ;
     }
 
-    get name( ) : string {
-        return Preser.GetColumnNameFromString ( this.data ) ;
+    get increment( ) : String {
+        return this.Arguments.increment === 'true' ? 'increment' : 'not increment' ;
     }
 
-    get type( ) : string {
-        return this.args.type ;
+    get default( ) : String {
+        return this.Arguments.default ? ' = ' + this.Arguments.default : ''  ;
     }
 
-    get icon( ) : string {
-        return this.args.icon ;
-    }
-
-    get Null( ) : string {
-        return this.args.Null === 'true' ? 'nullable' : 'not nullable' ;
-    }
-
-    get increment( ) : string {
-        return this.args.increment === 'true' ? 'increment' : 'not increment' ;
-    }
-
-    get color( ) : string {
-        return this.args.color ;
+    get total( ) : String {
+        return `${ this.Arguments.Null } ${ this.Arguments.type } ${ this.default }` ;
     }
 
 }

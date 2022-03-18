@@ -1,33 +1,16 @@
-import Preser from "../services/parser" ;
-import { Args , Column } from "."
+import { Args    , Column } from "."
+import { IColumn , ITable } from "./Interfaces"
 
-export default class table{
+export default class Table{
 
-    data : string ;
+    Name      : String    ;
+    Arguments : Args      ;
+    Columns   : Column[ ] ;
 
-    constructor( data : string ) {
-        this.data = data ;
-        console.log( 'this.details' , this.details );
-    }
-
-    get tableName( ) : string {
-        return Preser.GetColumnNameFromString( this.data ) ;
-    }
-
-    get details( ) : Args {
-        return Preser.GetTableDetailsFromString( this.data ) ;
-    }
-
-    get contant( ) : Column[ ] {
-        return Preser.convertStringTocolumn( this.data ) ;
-    }
-
-    get color( ) : string {
-        return this.details.color ;
-    }
-
-    get icon( ) : string {
-        return this.details.icon ;
+    constructor( data : ITable ) {
+        this.Name      = data.Name ;
+        this.Arguments = new Args( data.Arguments ) ;
+        this.Columns   = data.Columns.map( ( column : IColumn ) => new Column ( column ) ) ;
     }
 
 }
