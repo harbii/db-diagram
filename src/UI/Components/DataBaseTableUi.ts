@@ -1,7 +1,7 @@
 import { Vue    , Component , Prop } from 'vue-property-decorator'
 import { Table  as TableModels     } from 'app/src/models'
 import { Table                     } from './Drow'
-import preser , { ITable           } from '../../services/parser'
+import preser , { ITable           } from '../../services/Parser'
 
 @Component export default class extends Vue {
 

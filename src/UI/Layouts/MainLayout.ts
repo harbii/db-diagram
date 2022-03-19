@@ -43,7 +43,7 @@ export default class MainLayout extends Vue {
     render               ( CreateElement : Vue.CreateElement ) : Vue.VNode {
         this.$q.dark.set(true) ;
         let file : Vue.VNode<QFile> ;
-        return CreateElement( QLayout , { class : 'hHh lpR fFf' } , [ 
+        return CreateElement( QLayout , { class : 'hHh lpR fFf' } , [
             CreateElement( QHeader , { props : { elevated : true } } , [ CreateElement( QToolbar , { props : { elevated : true } } , [
                 CreateElement( QToolbarTitle , 'diagram test' ) ,
                 file = CreateElement( QFile , { style : 'display:none' , on : { input : this.uploudJsonFile } } ) ,

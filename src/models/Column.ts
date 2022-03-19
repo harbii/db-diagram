@@ -1,12 +1,12 @@
-import { Args    } from "."
-import { IColumn } from "./Interfaces"
+import { Args             } from "."
+import { IColumn , ITitle } from "./Interfaces"
 
-export default class Column{
-    Name      : String ;
+export default class Column implements IColumn{
+    Title      : ITitle ;
     Arguments : Args   ;
     constructor( data : IColumn ) {
-        this.Name      = data.Name ;
-        this.Arguments = new Args( data.Arguments ) ;
+        this.Title     = data.Title ;
+        this.Arguments = new Args( { ...data.Arguments , type : data.Title.Type } ) ;
     }
 
     get Null( ) : String {
@@ -14,15 +14,15 @@ export default class Column{
     }
 
     get increment( ) : String {
-        return this.Arguments.increment === 'true' ? 'increment' : 'not increment' ;
+        return this.Arguments.Increment === 'true' ? 'increment' : 'not increment' ;
     }
 
-    get default( ) : String {
-        return this.Arguments.default ? ' = ' + this.Arguments.default : ''  ;
+    get Default( ) : String {
+        return this.Arguments.Default ? ' = ' + this.Arguments.Default : ''  ;
     }
 
-    get total( ) : String {
-        return `${ this.Arguments.Null } ${ this.Arguments.type } ${ this.default }` ;
+    get Total( ) : String {
+        return `${ this.Null } ${ this.Arguments.Type } ${ this.Default }` ;
     }
 
 }
